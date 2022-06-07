@@ -3,6 +3,7 @@ package com.nttdata.nova.bookStore.service;
 import java.util.List;
 
 import com.nttdata.nova.bookStore.dto.EditorialDTOJsonRequest;
+import com.nttdata.nova.bookStore.dto.EditorialDTOJsonRequestExtended;
 import com.nttdata.nova.bookStore.dto.EditorialDTOJsonResponse;
 
 public interface IEditorialService {
@@ -16,7 +17,7 @@ public interface IEditorialService {
 	public void deleteAll();
 	
 	public EditorialDTOJsonResponse create(EditorialDTOJsonRequest inEditorial);
-	public EditorialDTOJsonResponse update(EditorialDTOJsonResponse inEditorial);
+	public EditorialDTOJsonResponse update(EditorialDTOJsonRequestExtended inEditorial);
 	
 	public EditorialDTOJsonResponse getEditorialByName(String name);
 }

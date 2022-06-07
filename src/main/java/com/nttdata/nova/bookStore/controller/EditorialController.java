@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.nttdata.nova.bookStore.dto.EditorialDTOJsonRequest;
+import com.nttdata.nova.bookStore.dto.EditorialDTOJsonRequestExtended;
 import com.nttdata.nova.bookStore.dto.EditorialDTOJsonResponse;
 import com.nttdata.nova.bookStore.exception.InvalidNameExtensionException;
 import com.nttdata.nova.bookStore.exception.editorialNotFoundException;
@@ -127,7 +128,7 @@ public class EditorialController {
 			@Content(mediaType = "application/json", schema = @Schema(implementation = EditorialDTOJsonResponse.class)) }),
 			@ApiResponse(responseCode = "400", description = "Invalid id supplied", content = @Content),
 			@ApiResponse(responseCode = "404", description = "Editorial not found") })
-	public HttpEntity<EditorialDTOJsonResponse> updateAEditorial(@RequestBody EditorialDTOJsonResponse editorial) {
+	public HttpEntity<EditorialDTOJsonResponse> updateAEditorial(@RequestBody EditorialDTOJsonRequestExtended editorial) {
 		EditorialDTOJsonResponse response = this.editorialService.update(editorial);
 
 		if (response == null) {

@@ -7,9 +7,13 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+
 import com.nttdata.nova.bookStore.dto.BookDTOJsonRequest;
+import com.nttdata.nova.bookStore.dto.BookDTOJsonRequestExtended;
 import com.nttdata.nova.bookStore.dto.BookDTOJsonResponse;
-import com.nttdata.nova.bookStore.dto.EditorialDTOJsonResponse;
+import com.nttdata.nova.bookStore.dto.EditorialDTOJsonRequestExtended;
 import com.nttdata.nova.bookStore.entity.Book;
 import com.nttdata.nova.bookStore.entity.Editorial;
 import com.nttdata.nova.bookStore.repository.IBookRepository;
@@ -27,6 +31,7 @@ public class BookService implements IBookService{
 	 * @return
 	 */
 	@Override
+	@Cacheable(value="books")
 	public Boolean checkBookExists(Long id) {
 		Optional<Book> idBook = this.bookRepository.findById(id);
 
@@ -39,6 +44,7 @@ public class BookService implements IBookService{
 	 * @return
 	 */
 	@Override
+	@Cacheable(value="books")
 	public BookDTOJsonResponse getBookById(Long id) {
 		Optional<Book> idBook = this.bookRepository.findById(id);
 
@@ -49,6 +55,7 @@ public class BookService implements IBookService{
 	 * 
 	 */
 	@Override
+	@Cacheable(value="books")
 	public List<BookDTOJsonResponse> getAllBooks() {
 		List<Book> response = (List<Book>) this.bookRepository.findAll();
 		List<BookDTOJsonResponse> responseDTO = new ArrayList<BookDTOJsonResponse>();
@@ -62,6 +69,7 @@ public class BookService implements IBookService{
 	 * @param id
 	 */
 	@Override
+	@CacheEvict(value="books", allEntries=true)
 	public void deleteById(Long id) {
 		this.bookRepository.deleteById(id);
 	}
@@ -70,6 +78,7 @@ public class BookService implements IBookService{
 	 * 
 	 */
 	@Override
+	@CacheEvict(value="books", allEntries=true)
 	public void deleteAll() {
 		this.bookRepository.deleteAll();
 	}
@@ -80,6 +89,7 @@ public class BookService implements IBookService{
 	 * @return
 	 */
 	@Override
+	@CacheEvict(value="books", allEntries=true)
 	public BookDTOJsonResponse create(BookDTOJsonRequest inBook) {
 		Book response = this.bookRepository.save(new Book(inBook));		
 		return new BookDTOJsonResponse(response);
@@ -91,7 +101,8 @@ public class BookService implements IBookService{
 	 * @return
 	 */
 	@Override
-	public BookDTOJsonResponse update(BookDTOJsonResponse inBook) {
+	@CacheEvict(value="books", allEntries=true)
+	public BookDTOJsonResponse update(BookDTOJsonRequestExtended inBook) {
 		if (!checkBookExists(inBook.getId()))
 			return null;
 		
@@ -108,9 +119,13 @@ public class BookService implements IBookService{
 	 * @return
 	 */
 	@Override
+	@Cacheable(value="books")
 	public BookDTOJsonResponse getBookByTitle(String title) {
 		
 		Book titleBook = this.bookRepository.findByTitleIs(title);
+		
+		System.out.println("He encontrado el libro con la descripcion: " + titleBook.getDescription());
+		
 		return new BookDTOJsonResponse(titleBook);
 	}
 
@@ -120,7 +135,8 @@ public class BookService implements IBookService{
 	 * @return
 	 */
 	@Override
-	public List<BookDTOJsonResponse> getBooksFromEditorial(EditorialDTOJsonResponse editorial) {
+	@Cacheable(value="books")
+	public List<BookDTOJsonResponse> getBooksFromEditorial(EditorialDTOJsonRequestExtended editorial) {
 		
 		List<Book> response = this.bookRepository.findByEditorialIs(new Editorial(editorial.getId(), editorial.getName()));
 		List<BookDTOJsonResponse> responseDTO = new ArrayList<BookDTOJsonResponse>();

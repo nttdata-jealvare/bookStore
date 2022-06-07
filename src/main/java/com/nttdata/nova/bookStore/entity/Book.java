@@ -9,6 +9,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.nttdata.nova.bookStore.dto.BookDTOJsonRequest;
+import com.nttdata.nova.bookStore.dto.BookDTOJsonRequestExtended;
 import com.nttdata.nova.bookStore.dto.BookDTOJsonResponse;
 
 import java.io.Serializable;
@@ -62,6 +63,16 @@ public class Book implements Serializable{ // serializable
 	}
 	
 	public Book(BookDTOJsonRequest b) {
+		this.title = b.getTitle();
+		this.author = b.getAuthor();
+		this.publish = b.getPublish();
+		this.pages = b.getPages();
+		this.description = b.getDescription();
+		this.editorial = new Editorial(b.getEditorial().getId(), b.getEditorial().getName());
+	}
+	
+	public Book(BookDTOJsonRequestExtended b) {
+		this.id = b.getId();
 		this.title = b.getTitle();
 		this.author = b.getAuthor();
 		this.publish = b.getPublish();

@@ -14,22 +14,26 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.nttdata.nova.bookStore.dto.BookDTOJsonRequest;
-import com.nttdata.nova.bookStore.dto.EditorialDTOJsonResponse;
+import com.nttdata.nova.bookStore.dto.EditorialDTOJsonRequestExtended;
 import com.nttdata.nova.bookStore.entity.Book;
 import com.nttdata.nova.bookStore.entity.Editorial;
+import com.nttdata.nova.bookStore.service.IBookRegistryService;
 import com.nttdata.nova.bookStore.service.implementation.BookService;
 
 @WebMvcTest(controllers = BookController.class)
 public class BookControllerTest {
+	
 	@Autowired
 	private MockMvc mockMvc;
 
 	@MockBean
 	private BookService bookService;
+	
+	@MockBean
+	private IBookRegistryService bookRegistryService;
 
 	/**
 	 * External object used to convert Task objects into JSON objects
@@ -38,7 +42,7 @@ public class BookControllerTest {
 	private ObjectMapper objectMapper;
 
 	private BookDTOJsonRequest bookRequest;
-	private EditorialDTOJsonResponse editorialResponse;
+	private EditorialDTOJsonRequestExtended editorialResponse;
 
 	/**
 	 * Mapper initializer
@@ -53,7 +57,7 @@ public class BookControllerTest {
 
 	@BeforeEach
 	public void initialize() {
-		this.editorialResponse = new EditorialDTOJsonResponse((long) 21, "Primera Editorial");
+		this.editorialResponse = new EditorialDTOJsonRequestExtended((long) 21, "Primera Editorial");
 		this.bookRequest = new BookDTOJsonRequest(new Book("Test", "Author test", new Date(), 74, "Description test",
 				new Editorial((long) 21, "Primera Editorial")));
 	}
@@ -66,8 +70,11 @@ public class BookControllerTest {
 	@Test
 	public void addABook() throws Exception {
 
-		RequestBuilder request = MockMvcRequestBuilders.post("/book/book").accept(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsBytes(this.bookRequest)).contentType(MediaType.APPLICATION_JSON);
+		RequestBuilder request = MockMvcRequestBuilders
+				.post("/book/book")
+				.accept(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsBytes(this.bookRequest));
 
 		mockMvc.perform(request).andExpect(MockMvcResultMatchers.status().isCreated()).andReturn();
 	}
@@ -91,7 +98,9 @@ public class BookControllerTest {
 	 */
 	@Test
 	public void getABook() throws Exception {
-		RequestBuilder request = MockMvcRequestBuilders.get("/book/book/{id}", 1).accept(MediaType.APPLICATION_JSON);
+		RequestBuilder request = MockMvcRequestBuilders
+				.get("/book/book/{id}", 1)
+				.accept(MediaType.APPLICATION_JSON);
 
 		mockMvc.perform(request).andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
 	}
@@ -102,8 +111,10 @@ public class BookControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void getBooksByEditorialTest() throws Exception {
-		RequestBuilder request = MockMvcRequestBuilders.get("/book/bookEditorial").accept(MediaType.APPLICATION_JSON)
+	public void getBooksByEditorial() throws Exception {
+		RequestBuilder request = MockMvcRequestBuilders
+				.get("/book/bookEditorial")
+				.accept(MediaType.APPLICATION_JSON)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsBytes(this.editorialResponse));
 
