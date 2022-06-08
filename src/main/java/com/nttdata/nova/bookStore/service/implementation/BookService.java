@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import com.nttdata.nova.bookStore.dto.BookDTOJsonRequest;
 import com.nttdata.nova.bookStore.dto.BookDTOJsonRequestExtended;
@@ -32,6 +34,7 @@ public class BookService implements IBookService{
 	 */
 	@Override
 	@Cacheable(value="books")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
 	public Boolean checkBookExists(Long id) {
 		Optional<Book> idBook = this.bookRepository.findById(id);
 
@@ -45,6 +48,7 @@ public class BookService implements IBookService{
 	 */
 	@Override
 	@Cacheable(value="books")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
 	public BookDTOJsonResponse getBookById(Long id) {
 		Optional<Book> idBook = this.bookRepository.findById(id);
 
@@ -56,6 +60,7 @@ public class BookService implements IBookService{
 	 */
 	@Override
 	@Cacheable(value="books")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
 	public List<BookDTOJsonResponse> getAllBooks() {
 		List<Book> response = (List<Book>) this.bookRepository.findAll();
 		List<BookDTOJsonResponse> responseDTO = new ArrayList<BookDTOJsonResponse>();
@@ -70,6 +75,7 @@ public class BookService implements IBookService{
 	 */
 	@Override
 	@CacheEvict(value="books", allEntries=true)
+	@PreAuthorize("hasRole('ADMIN')")
 	public void deleteById(Long id) {
 		this.bookRepository.deleteById(id);
 	}
@@ -79,6 +85,7 @@ public class BookService implements IBookService{
 	 */
 	@Override
 	@CacheEvict(value="books", allEntries=true)
+	@PreAuthorize("hasRole('ADMIN')")
 	public void deleteAll() {
 		this.bookRepository.deleteAll();
 	}
@@ -90,6 +97,7 @@ public class BookService implements IBookService{
 	 */
 	@Override
 	@CacheEvict(value="books", allEntries=true)
+	@PreAuthorize("hasRole('ADMIN')")
 	public BookDTOJsonResponse create(BookDTOJsonRequest inBook) {
 		Book response = this.bookRepository.save(new Book(inBook));		
 		return new BookDTOJsonResponse(response);
@@ -102,6 +110,7 @@ public class BookService implements IBookService{
 	 */
 	@Override
 	@CacheEvict(value="books", allEntries=true)
+	@PreAuthorize("hasRole('ADMIN')")
 	public BookDTOJsonResponse update(BookDTOJsonRequestExtended inBook) {
 		if (!checkBookExists(inBook.getId()))
 			return null;
@@ -120,6 +129,7 @@ public class BookService implements IBookService{
 	 */
 	@Override
 	@Cacheable(value="books")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
 	public BookDTOJsonResponse getBookByTitle(String title) {
 		
 		Book titleBook = this.bookRepository.findByTitleIs(title);
@@ -136,6 +146,7 @@ public class BookService implements IBookService{
 	 */
 	@Override
 	@Cacheable(value="books")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
 	public List<BookDTOJsonResponse> getBooksFromEditorial(EditorialDTOJsonRequestExtended editorial) {
 		
 		List<Book> response = this.bookRepository.findByEditorialIs(new Editorial(editorial.getId(), editorial.getName()));

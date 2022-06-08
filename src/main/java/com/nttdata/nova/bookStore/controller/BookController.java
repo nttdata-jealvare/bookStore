@@ -45,7 +45,7 @@ public class BookController {
 
 	@Autowired
 	private IBookRegistryService bookRegistryService;
-
+	
 	/**
 	 * HATEOAS
 	 * 
@@ -63,6 +63,7 @@ public class BookController {
 		}
 	}
 
+	
 	@GetMapping("/books")
 	@Operation(summary = "Get all books if there're any stored")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Found the books", content = {

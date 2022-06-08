@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import com.nttdata.nova.bookStore.dto.EditorialDTOJsonRequest;
@@ -29,6 +30,7 @@ public class EditorialService implements IEditorialService{
 	 */
 	@Override
 	@Cacheable(value="editorials")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
 	public Boolean checkEditorialExists(Long id) {
 		Optional<Editorial> idEditorial = this.editorialReposity.findById(id);
 		return idEditorial.isPresent();
@@ -41,6 +43,7 @@ public class EditorialService implements IEditorialService{
 	 */
 	@Override
 	@Cacheable(value="editorials")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
 	public EditorialDTOJsonResponse getEditorialById(Long id) {
 		Optional<Editorial> idEditorial = this.editorialReposity.findById(id);
 
@@ -52,6 +55,7 @@ public class EditorialService implements IEditorialService{
 	 */
 	@Override
 	@Cacheable(value="editorials")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
 	public List<EditorialDTOJsonResponse> getAllEditorials() {
 		List<EditorialDTOJsonResponse> responseDTO = new ArrayList<EditorialDTOJsonResponse>();
 		
@@ -70,6 +74,7 @@ public class EditorialService implements IEditorialService{
 	 */
 	@Override
 	@CacheEvict(value="editorials", allEntries=true)
+	@PreAuthorize("hasRole('ADMIN')")
 	public void deleteById(Long id) {
 		this.editorialReposity.deleteById(id);
 	}
@@ -79,6 +84,7 @@ public class EditorialService implements IEditorialService{
 	 */
 	@Override
 	@CacheEvict(value="editorials", allEntries=true)
+	@PreAuthorize("hasRole('ADMIN')")
 	public void deleteAll() {
 		this.editorialReposity.deleteAll();
 	}
@@ -90,6 +96,7 @@ public class EditorialService implements IEditorialService{
 	 */
 	@Override
 	@CacheEvict(value="editorials", allEntries=true)
+	@PreAuthorize("hasRole('ADMIN')")
 	public EditorialDTOJsonResponse create(EditorialDTOJsonRequest inEditorial) {
 		Editorial response = this.editorialReposity.save(new Editorial(inEditorial.getName()));
 		EditorialDTOJsonResponse responseDTO = new EditorialDTOJsonResponse(response);
@@ -103,6 +110,7 @@ public class EditorialService implements IEditorialService{
 	 */
 	@Override
 	@CacheEvict(value="editorials", allEntries=true)
+	@PreAuthorize("hasRole('ADMIN')")
 	public EditorialDTOJsonResponse update(EditorialDTOJsonRequestExtended inEditorial) {
 		if (!checkEditorialExists(inEditorial.getId()))
 			return null;
@@ -122,6 +130,7 @@ public class EditorialService implements IEditorialService{
 	 */
 	@Override
 	@Cacheable(value="editorials")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
 	public EditorialDTOJsonResponse getEditorialByName(String name) {
 		Editorial response = this.editorialReposity.findByNameIs(name);
 		EditorialDTOJsonResponse responseDTO = new EditorialDTOJsonResponse(response);

@@ -1,12 +1,14 @@
 package com.nttdata.nova.bookStore.cache;
 
 import org.junit.jupiter.api.Test;
+
 import org.mockito.BDDMockito;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 
 import com.nttdata.nova.bookStore.dto.EditorialDTOJsonRequestExtended;
@@ -17,6 +19,7 @@ import com.nttdata.nova.bookStore.service.IBookService;
 @SpringBootTest()
 @EnableCaching
 @DirtiesContext(classMode=DirtiesContext.ClassMode.AFTER_CLASS)
+@WithMockUser(username = "admin", roles = { "ADMIN" })
 //@Sql("/initDB.sql")
 public class BookServiceCacheTest {
 	@Autowired

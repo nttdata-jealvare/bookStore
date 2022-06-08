@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import com.nttdata.nova.bookStore.collection.BookRegistry;
@@ -21,6 +22,7 @@ public class BookRegistryService implements IBookRegistryService {
 
 	@Override
 	@CacheEvict(value="registries", allEntries=true)
+	//@PreAuthorize("hasRole('ADMIN')")
 	public BookRegistryDTOJson save(BookRegistryDTOJson bookReg) {
 	
 		bookReg.setId(Long.valueOf(this.bookRegistryRepository.findAll().size() + 1));
@@ -32,6 +34,7 @@ public class BookRegistryService implements IBookRegistryService {
 
 	@Override
 	@Cacheable(value="registries")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
 	public List<BookRegistryDTOJson> getAll() {
 		List<BookRegistryDTOJson> booksDTO = new ArrayList<BookRegistryDTOJson>();
 		

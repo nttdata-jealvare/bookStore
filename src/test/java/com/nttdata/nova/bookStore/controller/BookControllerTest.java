@@ -4,12 +4,16 @@ import java.util.Date;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -23,7 +27,9 @@ import com.nttdata.nova.bookStore.entity.Editorial;
 import com.nttdata.nova.bookStore.service.IBookRegistryService;
 import com.nttdata.nova.bookStore.service.implementation.BookService;
 
+@ExtendWith(SpringExtension.class)
 @WebMvcTest(controllers = BookController.class)
+@WithMockUser(username = "admin", roles = { "ADMIN" })
 public class BookControllerTest {
 	
 	@Autowired
