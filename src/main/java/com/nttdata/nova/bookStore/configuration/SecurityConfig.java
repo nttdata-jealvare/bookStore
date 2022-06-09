@@ -6,6 +6,8 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @SuppressWarnings("deprecation")
 @Configuration
@@ -13,6 +15,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 		prePostEnabled = true // Pre/Post Annotations
 		)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+	
+	private final PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.csrf()
@@ -26,13 +31,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+		String adminPassword = encoder.encode("password");
+		String userPassword = encoder.encode("user");
+		
 		auth.inMemoryAuthentication()
 				.withUser("admin") // ADMIN
-				.password("{noop}password")
+				.password(adminPassword)
 				.roles("ADMIN")
 				.and()
 				.withUser("user") // USER
-				.password("{noop}user")
+				.password(userPassword)
 				.roles("USER");
 	}
+	
+	
 }

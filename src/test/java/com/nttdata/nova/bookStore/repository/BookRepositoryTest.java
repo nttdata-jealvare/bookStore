@@ -94,9 +94,9 @@ public class BookRepositoryTest {
 	public void getABookFromTitle() {
 		String auxTitle = "Segundo libro"; // A title that we know exists
 
-		Book book = (Book) this.bookRepository.findByTitleIs(auxTitle);
-		assertThat(book).isNotNull(); // It should not be empty
-		assertThat(book.getTitle()).isEqualTo(auxTitle);
+		Optional<Book> book = this.bookRepository.findByTitleIs(auxTitle);
+		assertThat(book.isPresent()).isTrue(); // It should not be empty
+		assertThat(book.get().getTitle()).isEqualTo(auxTitle);
 	}
 
 	/**

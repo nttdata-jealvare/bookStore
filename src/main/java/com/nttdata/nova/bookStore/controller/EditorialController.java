@@ -67,11 +67,11 @@ public class EditorialController {
 
 		EditorialDTOJsonResponse response = this.editorialService.getEditorialById(id);
 
-		if (response == null) {
+		if (response.getId() != null ) {
 			throw new editorialNotFoundException();
+		}else {
+			addLinksIntoResponse(response);
 		}
-
-		addLinksIntoResponse(response);
 
 		return new ResponseEntity<EditorialDTOJsonResponse>(response, HttpStatus.OK);
 	}

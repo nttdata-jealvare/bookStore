@@ -11,6 +11,7 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 
+import com.nttdata.nova.bookStore.dto.BookDTOJsonResponse;
 import com.nttdata.nova.bookStore.dto.EditorialDTOJsonRequestExtended;
 import com.nttdata.nova.bookStore.entity.Editorial;
 import com.nttdata.nova.bookStore.repository.IBookRepository;

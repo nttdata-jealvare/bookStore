@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import com.nttdata.nova.bookStore.dto.BookDTOJsonRequest;
@@ -132,11 +131,9 @@ public class BookService implements IBookService{
 	@PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
 	public BookDTOJsonResponse getBookByTitle(String title) {
 		
-		Book titleBook = this.bookRepository.findByTitleIs(title);
-		
-		System.out.println("He encontrado el libro con la descripcion: " + titleBook.getDescription());
-		
-		return new BookDTOJsonResponse(titleBook);
+		Optional<Book> titleBook = this.bookRepository.findByTitleIs(title);
+				
+		return titleBook.isPresent() ?  new BookDTOJsonResponse(titleBook.get()) :  new BookDTOJsonResponse();
 	}
 
 	/**
@@ -149,7 +146,7 @@ public class BookService implements IBookService{
 	@PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
 	public List<BookDTOJsonResponse> getBooksFromEditorial(EditorialDTOJsonRequestExtended editorial) {
 		
-		List<Book> response = this.bookRepository.findByEditorialIs(new Editorial(editorial.getId(), editorial.getName()));
+		List<Book> response = (List<Book>)this.bookRepository.findByEditorialIs(new Editorial(editorial.getId(), editorial.getName()));
 		List<BookDTOJsonResponse> responseDTO = new ArrayList<BookDTOJsonResponse>();
 		for(Book b: response) responseDTO.add(new BookDTOJsonResponse(b)); 
 		

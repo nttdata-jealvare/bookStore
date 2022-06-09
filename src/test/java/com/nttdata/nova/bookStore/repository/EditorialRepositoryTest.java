@@ -78,9 +78,9 @@ public class EditorialRepositoryTest {
 	public void getEditorialByName() {
 		String auxName = "Primera Editorial";
 		
-		Editorial editorial = this.editorialRepository.findByNameIs(auxName);
-		assertThat(editorial).isNotNull();
-		assertThat(editorial.getName()).isEqualTo(auxName);
+		Optional<Editorial> editorial = this.editorialRepository.findByNameIs(auxName);
+		assertThat(editorial.isPresent()).isTrue();
+		assertThat(editorial.get().getName()).isEqualTo(auxName);
 	}
 	
 	/**

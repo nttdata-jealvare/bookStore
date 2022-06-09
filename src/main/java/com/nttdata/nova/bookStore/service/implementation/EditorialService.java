@@ -47,7 +47,7 @@ public class EditorialService implements IEditorialService{
 	public EditorialDTOJsonResponse getEditorialById(Long id) {
 		Optional<Editorial> idEditorial = this.editorialReposity.findById(id);
 
-		return idEditorial.isPresent() ? new EditorialDTOJsonResponse(idEditorial.get()) : null;
+		return idEditorial.isPresent() ? new EditorialDTOJsonResponse(idEditorial.get()) : new EditorialDTOJsonResponse();
 	}
 
 	/**
@@ -132,8 +132,8 @@ public class EditorialService implements IEditorialService{
 	@Cacheable(value="editorials")
 	@PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
 	public EditorialDTOJsonResponse getEditorialByName(String name) {
-		Editorial response = this.editorialReposity.findByNameIs(name);
-		EditorialDTOJsonResponse responseDTO = new EditorialDTOJsonResponse(response);
+		Optional<Editorial> response = this.editorialReposity.findByNameIs(name);
+		EditorialDTOJsonResponse responseDTO = response.isPresent() ? new EditorialDTOJsonResponse(response.get()) : new EditorialDTOJsonResponse();
 		
 		return responseDTO;		
 	}

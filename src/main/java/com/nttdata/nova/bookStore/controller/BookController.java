@@ -124,14 +124,15 @@ public class BookController {
 		return new ResponseEntity<BookDTOJsonResponse>(response, HttpStatus.OK);
 	}
 
-	@GetMapping("/bookEditorial")
+	@PostMapping("/bookEditorial")
 	@Operation(summary = "Get a book from editorial")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Found the books", content = {
 			@Content(mediaType = "application/json", schema = @Schema(implementation = BookDTOJsonResponse.class)) }),
 			@ApiResponse(responseCode = "400", description = "Invalid id supplied", content = @Content),
 			@ApiResponse(responseCode = "404", description = "Book not found", content = @Content) })
 	public HttpEntity<List<BookDTOJsonResponse>> getABookEditorial(@Valid
-			@RequestBody EditorialDTOJsonRequestExtended editorial) {		
+			@RequestBody EditorialDTOJsonRequestExtended editorial) {	
+		// TODO
 		List<BookDTOJsonResponse> books = this.bookService.getBooksFromEditorial(editorial);
 
 		for (BookDTOJsonResponse b : books) {

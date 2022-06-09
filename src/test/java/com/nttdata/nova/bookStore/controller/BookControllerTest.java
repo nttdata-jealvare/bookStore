@@ -5,6 +5,7 @@ import java.util.Date;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.BDDMockito;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +22,13 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.nttdata.nova.bookStore.dto.BookDTOJsonRequest;
+import com.nttdata.nova.bookStore.dto.BookDTOJsonResponse;
 import com.nttdata.nova.bookStore.dto.EditorialDTOJsonRequestExtended;
+import com.nttdata.nova.bookStore.dto.EditorialDTOJsonResponse;
 import com.nttdata.nova.bookStore.entity.Book;
 import com.nttdata.nova.bookStore.entity.Editorial;
 import com.nttdata.nova.bookStore.service.IBookRegistryService;
+import com.nttdata.nova.bookStore.service.IEditorialService;
 import com.nttdata.nova.bookStore.service.implementation.BookService;
 
 @ExtendWith(SpringExtension.class)
@@ -37,6 +41,9 @@ public class BookControllerTest {
 
 	@MockBean
 	private BookService bookService;
+	
+	@MockBean
+	private IEditorialService editorialService;
 	
 	@MockBean
 	private IBookRegistryService bookRegistryService;
@@ -75,12 +82,24 @@ public class BookControllerTest {
 	 */
 	@Test
 	public void addABook() throws Exception {
+		
+		EditorialDTOJsonResponse editorial = new EditorialDTOJsonResponse();
+		editorial.setId(Long.valueOf(1));
+		editorial.setName("Nova editions");
+		
+		BDDMockito.given(editorialService.getEditorialById(Long.valueOf(1))).willReturn(editorial);
 
 		RequestBuilder request = MockMvcRequestBuilders
 				.post("/book/book")
 				.accept(MediaType.APPLICATION_JSON)
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsBytes(this.bookRequest));
+				.content( "{\"autor\": \"NTT Data\","
+                        + "\"descripcion\": \"A book about microservices\", "
+                        + "\"editorial\": {\"id\": 1, \"nombre\": \"Nova editions\"},"
+                        + "\"id\": 0,"
+                        + "\"paginas\": 100,"
+                        + "\"publicado\": \"2021-11-11T13:20:18.394Z\","
+                        + "\"titulo\": \"An introduction to microservices\"}")
+				.contentType(MediaType.APPLICATION_JSON);
 
 		mockMvc.perform(request).andExpect(MockMvcResultMatchers.status().isCreated()).andReturn();
 	}
@@ -104,6 +123,12 @@ public class BookControllerTest {
 	 */
 	@Test
 	public void getABook() throws Exception {
+		BookDTOJsonResponse book = new BookDTOJsonResponse(new Book("Test", "Author test", new Date(), 74, "Description test",
+				new Editorial(Long.valueOf(1), "Primera Editorial")));
+		
+		
+		BDDMockito.given(this.bookService.getBookById(1L)).willReturn(book);
+				
 		RequestBuilder request = MockMvcRequestBuilders
 				.get("/book/book/{id}", 1)
 				.accept(MediaType.APPLICATION_JSON);
@@ -119,7 +144,7 @@ public class BookControllerTest {
 	@Test
 	public void getBooksByEditorial() throws Exception {
 		RequestBuilder request = MockMvcRequestBuilders
-				.get("/book/bookEditorial")
+				.post("/book/bookEditorial")
 				.accept(MediaType.APPLICATION_JSON)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsBytes(this.editorialResponse));
